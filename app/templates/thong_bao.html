@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block tieu_de %}Thông báo - Kho Sổ tay hướng dẫn điện tử{% endblock %}
+{% block noi_dung %}
+<div style="max-width:760px;margin:32px auto;padding:0 24px">
+    <p><a href="{{ url_for('main.trang_chu') }}" style="color:var(--green);font-weight:600">← Về trang chủ</a></p>
+    <div class="the-noi-dung">
+        <h1>🔔 Thông báo</h1>
+        {% for tb in danh_sach %}
+        <div style="display:flex;justify-content:space-between;gap:14px;padding:12px 0;{{ 'border-bottom:1px solid var(--line)' if not loop.last }}">
+            {% if tb.tai_lieu %}
+            <a href="{{ url_for('main.chi_tiet_tai_lieu', tai_lieu_id=tb.tai_lieu_id) }}" style="color:var(--green-dark);font-weight:600">{{ tb.tieu_de }}</a>
+            {% else %}
+            <span>{{ tb.tieu_de }}</span>
+            {% endif %}
+            <span style="color:var(--muted);font-size:13px;white-space:nowrap">{{ tb.ngay_dang.strftime('%d/%m/%Y') }}</span>
+        </div>
+        {% else %}
+        <p style="color:var(--muted)">Chưa có thông báo nào.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

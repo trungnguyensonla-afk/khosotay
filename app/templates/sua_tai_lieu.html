@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block tieu_de %}Sửa tài liệu - Kho Sổ tay hướng dẫn điện tử{% endblock %}
+{% block noi_dung %}
+<div style="max-width:760px;margin:32px auto;padding:0 24px">
+    <p><a href="{{ url_for('main.chi_tiet_tai_lieu', tai_lieu_id=tl.id) }}" style="color:var(--green);font-weight:600">← Về trang chi tiết</a></p>
+    <div class="the-noi-dung" style="margin-bottom:20px">
+        <h1 style="font-size:1.1rem">File đính kèm ({{ danh_sach_tep|length }})</h1>
+        {% for muc in danh_sach_tep %}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;{{ 'border-bottom:1px solid var(--line)' if not loop.last }}">
+            <div style="display:flex;align-items:center;gap:8px">
+                <span>{{ muc.ten_hien_thi }}</span>
+                {% if muc.tep.trang_thai_xu_ly == 'dang_xu_ly' %}<span class="badge review">⏳ Đang OCR</span>{% endif %}
+                {% if muc.tep.trang_thai_xu_ly == 'loi' %}<span class="badge expired">⚠ Lỗi xử lý</span>{% endif %}
+            </div>
+            {% if danh_sach_tep|length > 1 %}
+            <form method="POST" action="{{ url_for('main.xoa_tep_tai_lieu', tai_lieu_id=tl.id, tep_id=muc.tep.id) }}" onsubmit="return confirm('Xoá file này khỏi tài liệu?');">
+                <button type="submit" style="border:1px solid var(--line);background:#fff;color:var(--red);border-radius:6px;padding:5px 12px;font-size:12.5px;cursor:pointer;font-family:inherit">Xoá</button>
+            </form>
+            {% else %}
+            <span style="font-size:12px;color:var(--muted)" title="Tài liệu phải còn ít nhất 1 file">Xoá</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        <form method="POST" action="{{ url_for('main.them_file_tai_lieu', tai_lieu_id=tl.id) }}" enctype="multipart/form-data" style="margin-top:16px;display:flex;gap:10px;align-items:center">
+            <input type="file" name="file" accept=".pdf,.doc,.docx" multiple style="flex:1">
+            <button type="submit" class="nut-chinh" style="width:auto;padding:9px 18px">Thêm file</button>
+        </form>
+    </div>
+
+    <div class="the-noi-dung">
+        <h1>Sửa thông tin tài liệu</h1>
+        <p class="mo-ta">Thông tin mô tả chung của tài liệu - quản lý file đính kèm ở khung phía trên.</p>
+
+        <form method="POST">
+            <div class="truong-nhap">
+                <label for="tieu_de">Tiêu đề tài liệu *</label>
+                <input type="text" id="tieu_de" name="tieu_de" value="{{ tl.tieu_de }}" required>
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="so_hieu">Số hiệu văn bản</label>
+                    <input type="text" id="so_hieu" name="so_hieu" value="{{ tl.so_hieu or '' }}">
+                </div>
+                <div class="truong-nhap">
+                    <label for="phien_ban">Phiên bản</label>
+                    <input type="text" id="phien_ban" name="phien_ban" value="{{ tl.phien_ban or '' }}">
+                </div>
+            </div>
+
+            <div class="truong-nhap">
+                <label for="co_quan_ban_hanh">Cơ quan ban hành</label>
+                <input type="text" id="co_quan_ban_hanh" name="co_quan_ban_hanh" value="{{ tl.co_quan_ban_hanh or '' }}" placeholder="VD: UBND tỉnh Sơn La">
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="linh_vuc_id">Lĩnh vực</label>
+                    <select id="linh_vuc_id" name="linh_vuc_id">
+                        <option value="">-- Chọn lĩnh vực --</option>
+                        {% for lv in danh_sach_linh_vuc %}
+                        <option value="{{ lv.id }}" {{ 'selected' if tl.linh_vuc_id == lv.id }}>{{ lv.ten }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="truong-nhap">
+                    <label for="don_vi_id">Đơn vị quản lý</label>
+                    <select id="don_vi_id" name="don_vi_id">
+                        <option value="">-- Chọn đơn vị --</option>
+                        {% for dv in danh_sach_don_vi %}
+                        <option value="{{ dv.id }}" {{ 'selected' if tl.don_vi_id == dv.id }}>{{ dv.ten }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="loai_van_ban">Loại văn bản</label>
+                    <select id="loai_van_ban" name="loai_van_ban">
+                        <option value="">-- Chọn loại --</option>
+                        {% for lvb in loai_van_ban_lua_chon %}
+                        <option value="{{ lvb }}" {{ 'selected' if tl.loai_van_ban == lvb }}>{{ lvb }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="truong-nhap">
+                    <label for="tinh_trang">Tình trạng hiệu lực</label>
+                    <select id="tinh_trang" name="tinh_trang">
+                        {% for tt in tinh_trang_lua_chon %}
+                        <option value="{{ tt }}" {{ 'selected' if tl.tinh_trang == tt }}>{{ tt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="ngay_ban_hanh">Ngày ban hành</label>
+                    <input type="date" id="ngay_ban_hanh" name="ngay_ban_hanh" value="{{ tl.ngay_ban_hanh.isoformat() if tl.ngay_ban_hanh else '' }}">
+                </div>
+                <div class="truong-nhap">
+                    <label for="ngay_het_hieu_luc">Ngày hết hiệu lực (nếu có)</label>
+                    <input type="date" id="ngay_het_hieu_luc" name="ngay_het_hieu_luc" value="{{ tl.ngay_het_hieu_luc.isoformat() if tl.ngay_het_hieu_luc else '' }}">
+                </div>
+            </div>
+
+            <button type="submit" class="nut-chinh">Lưu thay đổi</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

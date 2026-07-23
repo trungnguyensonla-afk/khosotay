@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+{% block tieu_de %}Trang chủ - Kho Sổ tay hướng dẫn điện tử{% endblock %}
+{% block noi_dung %}
+<div style="max-width:1240px;margin:0 auto;overflow:hidden">
+    <img src="{{ url_for('static', filename='images/banner.jpg') }}"
+         alt="Kho Sổ tay hướng dẫn điện tử - Sở Nông nghiệp và Môi trường tỉnh Sơn La"
+         style="width:100%;aspect-ratio:2172/460;object-fit:cover;object-position:top;display:block">
+</div>
+<div class="searchband">
+    <div class="searchwrap">
+        <form method="GET" action="{{ url_for('main.trang_chu') }}">
+            <input type="hidden" name="linh_vuc" value="{{ bo_loc.linh_vuc or '' }}">
+            <input type="hidden" name="don_vi" value="{{ bo_loc.don_vi or '' }}">
+            <input type="hidden" name="tinh_trang" value="{{ bo_loc.tinh_trang or '' }}">
+            <input type="hidden" name="loai_van_ban" value="{{ bo_loc.loai_van_ban or '' }}">
+            <input type="hidden" name="tu_ngay" value="{{ bo_loc.tu_ngay or '' }}">
+            <input type="hidden" name="den_ngay" value="{{ bo_loc.den_ngay or '' }}">
+            <input type="hidden" name="sort" value="{{ bo_loc.sort }}">
+            <div class="searchbox">
+                <input type="text" name="q" value="{{ bo_loc.q }}" placeholder="Nhập từ khóa: tên văn bản, số hiệu, hoặc nội dung bên trong tài liệu...">
+                <button type="submit">🔍 Tìm kiếm</button>
+            </div>
+        </form>
+        <div class="hints">
+            <b>Gợi ý:</b>
+            {% for goi_y in tu_khoa_goi_y %}
+            <a href="{{ url_for('main.trang_chu', q=goi_y, linh_vuc=bo_loc.linh_vuc or None, don_vi=bo_loc.don_vi or None, tinh_trang=bo_loc.tinh_trang or None, loai_van_ban=bo_loc.loai_van_ban or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}"><span>{{ goi_y }}</span></a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="layout">
+    <aside class="sidebar">
+        {% if current_user.is_authenticated and current_user.la_bien_tap() %}
+        <a href="{{ url_for('main.nap_tai_lieu') }}"><button class="btn-upload" type="button">➕ Nạp tài liệu mới</button></a>
+        {% endif %}
+
+        <div class="facet">
+            <h3>Lĩnh vực</h3>
+            <ul>
+                <li class="{{ 'active' if not bo_loc.linh_vuc }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, don_vi=bo_loc.don_vi or None, tinh_trang=bo_loc.tinh_trang or None, loai_van_ban=bo_loc.loai_van_ban or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>Tất cả</span><span class="cnt">{{ tong_so_tai_lieu }}</span>
+                    </a>
+                </li>
+                {% for lv in danh_sach_linh_vuc %}
+                <li class="{{ 'active' if bo_loc.linh_vuc == lv.id }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=lv.id, don_vi=bo_loc.don_vi or None, tinh_trang=bo_loc.tinh_trang or None, loai_van_ban=bo_loc.loai_van_ban or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>{{ lv.ten }}</span><span class="cnt">{{ dem_linh_vuc.get(lv.id, 0) }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="facet">
+            <h3>Đơn vị quản lý</h3>
+            <ul>
+                <li class="{{ 'active' if not bo_loc.don_vi }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=bo_loc.linh_vuc or None, tinh_trang=bo_loc.tinh_trang or None, loai_van_ban=bo_loc.loai_van_ban or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>Tất cả</span><span class="cnt">{{ tong_so_tai_lieu }}</span>
+                    </a>
+                </li>
+                {% for dv in danh_sach_don_vi %}
+                <li class="{{ 'active' if bo_loc.don_vi == dv.id }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=bo_loc.linh_vuc or None, don_vi=dv.id, tinh_trang=bo_loc.tinh_trang or None, loai_van_ban=bo_loc.loai_van_ban or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>{{ dv.ten }}</span><span class="cnt">{{ dem_don_vi.get(dv.id, 0) }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="facet">
+            <h3>Tình trạng hiệu lực</h3>
+            <ul>
+                <li class="{{ 'active' if not bo_loc.tinh_trang }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=bo_loc.linh_vuc or None, don_vi=bo_loc.don_vi or None, loai_van_ban=bo_loc.loai_van_ban or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>Tất cả</span><span class="cnt">{{ tong_so_tai_lieu }}</span>
+                    </a>
+                </li>
+                {% for nhan in danh_sach_tinh_trang %}
+                <li class="{{ 'active' if bo_loc.tinh_trang == nhan }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=bo_loc.linh_vuc or None, don_vi=bo_loc.don_vi or None, tinh_trang=nhan, loai_van_ban=bo_loc.loai_van_ban or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>{{ nhan }}</span><span class="cnt">{{ dem_tinh_trang.get(nhan, 0) }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="facet">
+            <h3>Loại văn bản</h3>
+            <ul>
+                <li class="{{ 'active' if not bo_loc.loai_van_ban }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=bo_loc.linh_vuc or None, don_vi=bo_loc.don_vi or None, tinh_trang=bo_loc.tinh_trang or None, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>Tất cả</span><span class="cnt">{{ tong_so_tai_lieu }}</span>
+                    </a>
+                </li>
+                {% for lvb in loai_van_ban_lua_chon %}
+                <li class="{{ 'active' if bo_loc.loai_van_ban == lvb }}">
+                    <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=bo_loc.linh_vuc or None, don_vi=bo_loc.don_vi or None, tinh_trang=bo_loc.tinh_trang or None, loai_van_ban=lvb, tu_ngay=bo_loc.tu_ngay or None, den_ngay=bo_loc.den_ngay or None, sort=bo_loc.sort) }}" style="display:flex;justify-content:space-between;width:100%">
+                        <span>{{ lvb }}</span><span class="cnt">{{ dem_loai_van_ban.get(lvb, 0) }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="facet">
+            <h3>Khoảng thời gian ban hành</h3>
+            <form method="GET" action="{{ url_for('main.trang_chu') }}" style="display:flex;flex-direction:column;gap:8px">
+                <input type="hidden" name="q" value="{{ bo_loc.q }}">
+                <input type="hidden" name="linh_vuc" value="{{ bo_loc.linh_vuc or '' }}">
+                <input type="hidden" name="don_vi" value="{{ bo_loc.don_vi or '' }}">
+                <input type="hidden" name="tinh_trang" value="{{ bo_loc.tinh_trang or '' }}">
+                <input type="hidden" name="loai_van_ban" value="{{ bo_loc.loai_van_ban or '' }}">
+                <input type="hidden" name="sort" value="{{ bo_loc.sort }}">
+                <label style="font-size:12.5px;color:var(--muted)">Từ ngày
+                    <input type="date" name="tu_ngay" value="{{ bo_loc.tu_ngay or '' }}" style="width:100%">
+                </label>
+                <label style="font-size:12.5px;color:var(--muted)">Đến ngày
+                    <input type="date" name="den_ngay" value="{{ bo_loc.den_ngay or '' }}" style="width:100%">
+                </label>
+                <button type="submit" class="nut-chinh" style="padding:6px 10px;font-size:13px">Lọc theo ngày</button>
+                {% if bo_loc.tu_ngay or bo_loc.den_ngay %}
+                <a href="{{ url_for('main.trang_chu', q=bo_loc.q or None, linh_vuc=bo_loc.linh_vuc or None, don_vi=bo_loc.don_vi or None, tinh_trang=bo_loc.tinh_trang or None, loai_van_ban=bo_loc.loai_van_ban or None, sort=bo_loc.sort) }}" style="font-size:12.5px;text-align:center">Bỏ lọc ngày</a>
+                {% endif %}
+            </form>
+        </div>
+    </aside>
+
+    <main class="results">
+        <div class="bar">
+            <div class="count">Tìm thấy <b>{{ tong_so_ket_qua }}</b> tài liệu</div>
+            <div class="tools">
+                <span style="font-size:13px;color:var(--muted)">Sắp xếp:</span>
+                <form method="GET" action="{{ url_for('main.trang_chu') }}" id="form-sap-xep">
+                    <input type="hidden" name="q" value="{{ bo_loc.q }}">
+                    <input type="hidden" name="linh_vuc" value="{{ bo_loc.linh_vuc or '' }}">
+                    <input type="hidden" name="don_vi" value="{{ bo_loc.don_vi or '' }}">
+                    <input type="hidden" name="tinh_trang" value="{{ bo_loc.tinh_trang or '' }}">
+                    <input type="hidden" name="loai_van_ban" value="{{ bo_loc.loai_van_ban or '' }}">
+                    <input type="hidden" name="tu_ngay" value="{{ bo_loc.tu_ngay or '' }}">
+                    <input type="hidden" name="den_ngay" value="{{ bo_loc.den_ngay or '' }}">
+                    <select name="sort" onchange="document.getElementById('form-sap-xep').submit()">
+                        <option value="new" {{ 'selected' if bo_loc.sort == 'new' }}>Mới nhất</option>
+                        <option value="az" {{ 'selected' if bo_loc.sort == 'az' }}>Tên A → Z</option>
+                        <option value="unit" {{ 'selected' if bo_loc.sort == 'unit' }}>Theo đơn vị</option>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            {% if ket_qua %}
+                {% for muc in ket_qua %}
+                {% set tl = muc.tai_lieu %}
+                <div class="doc">
+                    <div class="head">
+                        <div class="ficon {{ muc.loai_file }}">{{ muc.loai_file | upper }}</div>
+                        <div style="flex:1">
+                            <a href="{{ url_for('main.chi_tiet_tai_lieu', tai_lieu_id=tl.id) }}" class="title" style="display:block">{{ tl.tieu_de }}</a>
+                            <div class="meta">
+                                {% if tl.so_hieu %}<span>Số hiệu: {{ tl.so_hieu }}</span>{% endif %}
+                                {% if tl.don_vi %}<span>{{ tl.don_vi.ten }}</span>{% endif %}
+                                {% if tl.ngay_ban_hanh %}<span>Ban hành: {{ tl.ngay_ban_hanh.strftime('%d/%m/%Y') }}</span>{% endif %}
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <a href="{{ url_for('main.chi_tiet_tai_lieu', tai_lieu_id=tl.id) }}"><button title="Xem" type="button">👁</button></a>
+                            {% if muc.tep_dau_id %}
+                            <a href="{{ url_for('main.file_tai_lieu', tai_lieu_id=tl.id, tep_id=muc.tep_dau_id, tai_ve=1) }}"><button title="Tải về" type="button">⬇</button></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if tl.trang_thai_xu_ly == 'dang_xu_ly' %}
+                    <div class="snippet" style="color:var(--amber)">⏳ Đang chạy OCR tiếng Việt (chế độ nền)... tải lại trang sau ít phút để xem nội dung.</div>
+                    {% elif tl.trang_thai_xu_ly == 'loi' %}
+                    <div class="snippet" style="color:var(--red)">⚠ Chưa trích xuất được nội dung tài liệu này.</div>
+                    {% elif muc.trich_doan %}
+                    <div class="snippet">{{ muc.trich_doan }}</div>
+                    {% endif %}
+                    <div class="tags">
+                        <span class="badge {{ muc.status_class }}">{{ tl.tinh_trang or 'Chưa xác định' }}</span>
+                        {% if tl.trang_thai_xu_ly == 'dang_xu_ly' %}<span class="badge review">Đang OCR</span>{% endif %}
+                        {% if tl.trang_thai_xu_ly == 'loi' %}<span class="badge expired">Lỗi xử lý</span>{% endif %}
+                        {% if tl.linh_vuc %}<span class="tag">{{ tl.linh_vuc.ten }}</span>{% endif %}
+                        {% if tl.don_vi %}<span class="tag unit">{{ tl.don_vi.ten }}</span>{% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="doc" style="text-align:center;color:var(--muted);padding:30px">
+                    {% if tong_so_tai_lieu == 0 %}
+                    Kho chưa có tài liệu nào. Chức năng nạp tài liệu sẽ sớm được xây dựng.
+                    {% else %}
+                    Không tìm thấy tài liệu phù hợp. Thử từ khóa khác hoặc bỏ bớt bộ lọc.
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <aside class="sidebar-phai">
+        <div class="khung">
+            <h3>🔔 Thông báo</h3>
+            {% for tb in thong_bao_moi_nhat %}
+            <div class="muc">
+                <div class="icon">📌</div>
+                <div class="noi-dung">
+                    {% if tb.tai_lieu %}
+                    <a class="tieu-de" href="{{ url_for('main.chi_tiet_tai_lieu', tai_lieu_id=tb.tai_lieu_id) }}">{{ tb.tieu_de }}</a>
+                    {% else %}
+                    <span class="tieu-de">{{ tb.tieu_de }}</span>
+                    {% endif %}
+                    <div class="phu">{{ tb.ngay_dang.strftime('%d/%m/%Y') }}</div>
+                </div>
+            </div>
+            {% else %}
+            <p style="color:var(--muted);font-size:13px">Chưa có thông báo nào.</p>
+            {% endfor %}
+            {% if thong_bao_moi_nhat %}
+            <a class="xem-tat-ca" href="{{ url_for('main.danh_sach_thong_bao') }}">Xem tất cả →</a>
+            {% endif %}
+        </div>
+
+        <div class="khung">
+            <h3>👁 Tài liệu xem nhiều</h3>
+            {% for tl in tai_lieu_xem_nhieu %}
+            <div class="muc">
+                <div class="icon">📄</div>
+                <div class="noi-dung">
+                    <a class="tieu-de" href="{{ url_for('main.chi_tiet_tai_lieu', tai_lieu_id=tl.id) }}">{{ tl.tieu_de }}</a>
+                    <div class="phu">{{ tl.luot_xem }} lượt xem</div>
+                </div>
+            </div>
+            {% else %}
+            <p style="color:var(--muted);font-size:13px">Chưa có dữ liệu lượt xem.</p>
+            {% endfor %}
+        </div>
+    </aside>
+</div>
+{% endblock %}

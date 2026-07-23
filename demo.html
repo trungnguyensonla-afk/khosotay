@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kho Sổ tay hướng dẫn điện tử — Sở Nông nghiệp và Môi trường Sơn La</title>
+<style>
+  :root{
+    --green:#1b7a43; --green-dark:#145c33; --green-light:#e8f3ec;
+    --ink:#1f2933; --muted:#67727e; --line:#e2e7ea; --bg:#f4f7f5;
+    --amber:#b5720a; --amber-bg:#fdf3e2; --red:#a32d2d; --red-bg:#fbeaea;
+    --blue:#1d6fa5; --blue-bg:#e5f0f7; --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI','Helvetica Neue',Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;font-size:15px}
+  a{color:inherit;text-decoration:none}
+
+  /* Header */
+  header{background:var(--green);color:#fff}
+  .topbar{max-width:1240px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:14px}
+  .emblem{width:42px;height:42px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:var(--green);font-size:12px;text-align:center;line-height:1.1}
+  .org h1{font-size:15.5px;font-weight:600}
+  .org p{font-size:12px;opacity:.85}
+  .topnav{margin-left:auto;display:flex;gap:4px;align-items:center}
+  .topnav a{padding:7px 14px;border-radius:6px;font-size:13.5px;opacity:.9}
+  .topnav a.active,.topnav a:hover{background:rgba(255,255,255,.15);opacity:1}
+  .user{margin-left:12px;font-size:13px;display:flex;align-items:center;gap:8px;border-left:1px solid rgba(255,255,255,.25);padding-left:14px}
+  .avatar{width:30px;height:30px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px}
+
+  /* Search band */
+  .searchband{background:var(--green-dark);padding:20px 24px}
+  .searchwrap{max-width:1240px;margin:0 auto}
+  .searchwrap h2{color:#fff;font-size:19px;font-weight:600;margin-bottom:10px}
+  .searchbox{display:flex;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.14);max-width:820px}
+  .searchbox input{flex:1;border:0;padding:13px 18px;font-size:15.5px;outline:none;font-family:inherit}
+  .searchbox button{border:0;background:var(--amber);color:#fff;padding:0 26px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px}
+  .searchbox button:hover{background:#9c6208}
+  .hints{margin-top:9px;color:#cfe6d8;font-size:12.5px}
+  .hints b{font-weight:400;opacity:.8}
+  .hints span{display:inline-block;background:rgba(255,255,255,.12);padding:3px 10px;border-radius:12px;margin-right:6px;cursor:pointer}
+  .hints span:hover{background:rgba(255,255,255,.22)}
+
+  /* Layout */
+  .layout{max-width:1240px;margin:20px auto;padding:0 24px;display:grid;grid-template-columns:255px 1fr;gap:22px}
+
+  /* Sidebar */
+  .sidebar .facet{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+  .sidebar h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin:0 0 10px;font-weight:700}
+  .facet ul{list-style:none}
+  .facet li{padding:6px 0;font-size:14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:#37454f}
+  .facet li:hover{color:var(--green)}
+  .facet li.active{color:var(--green);font-weight:600}
+  .facet li .cnt{font-size:11.5px;color:var(--muted);background:var(--bg);padding:1px 8px;border-radius:10px}
+  .facet li.active .cnt{background:var(--green-light);color:var(--green-dark)}
+  .btn-upload{width:100%;background:var(--green);color:#fff;border:0;border-radius:8px;padding:11px;font-size:14.5px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px}
+  .btn-upload:hover{background:var(--green-dark)}
+
+  /* Results */
+  .results .bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .results .bar .count{font-size:14px;color:var(--muted)}
+  .results .bar .count b{color:var(--ink)}
+  .results .bar .tools{display:flex;gap:8px;align-items:center}
+  .results .bar select{border:1px solid var(--line);border-radius:6px;padding:7px 10px;font-family:inherit;font-size:13.5px;color:var(--ink);background:#fff}
+
+  .doc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:15px 17px;margin-bottom:11px;transition:box-shadow .15s,border-color .15s}
+  .doc:hover{box-shadow:0 3px 14px rgba(0,0,0,.07);border-color:#cdd7d1}
+  .doc .head{display:flex;gap:12px;align-items:flex-start}
+  .ficon{width:38px;height:46px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10.5px;font-weight:700}
+  .ficon.pdf{background:#c0392b}
+  .ficon.doc{background:#2b579a}
+  .doc .title{font-size:15.5px;font-weight:600;color:var(--green-dark);margin-bottom:3px;cursor:pointer}
+  .doc .title:hover{text-decoration:underline}
+  .doc .meta{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:3px 14px}
+  .doc .snippet{font-size:13.5px;color:#4a5560;margin-top:8px;padding-left:50px}
+  .doc .snippet mark{background:#fef0c8;padding:0 2px;border-radius:2px;font-weight:500}
+  .doc .tags{margin-top:10px;padding-left:50px;display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .tag{font-size:12px;padding:3px 10px;border-radius:12px;background:var(--green-light);color:var(--green-dark)}
+  .tag.unit{background:var(--blue-bg);color:var(--blue)}
+  .badge{font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:12px}
+  .badge.valid{background:var(--green-light);color:var(--green-dark)}
+  .badge.expired{background:var(--red-bg);color:var(--red)}
+  .badge.review{background:var(--amber-bg);color:var(--amber)}
+  .doc .actions{margin-left:auto;display:flex;gap:6px}
+  .doc .actions button{border:1px solid var(--line);background:#fff;border-radius:6px;width:32px;height:32px;cursor:pointer;color:var(--muted);font-size:14px}
+  .doc .actions button:hover{border-color:var(--green);color:var(--green)}
+
+  footer{max-width:1240px;margin:8px auto 36px;padding:0 24px;color:var(--muted);font-size:12.5px;text-align:center}
+
+  @media(max-width:860px){.layout{grid-template-columns:1fr}.sidebar{order:2}.topnav a{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="emblem">NN&amp;MT</div>
+    <div class="org">
+      <h1>Kho Sổ tay hướng dẫn điện tử</h1>
+      <p>Sở Nông nghiệp và Môi trường tỉnh Sơn La</p>
+    </div>
+    <nav class="topnav">
+      <a href="#" class="active">Trang chủ</a>
+      <a href="#">Tài liệu</a>
+      <a href="#">Thống kê</a>
+      <a href="#">Quản trị</a>
+    </nav>
+    <div class="user">
+      <div class="avatar">A</div>
+      <div>Nguyễn Văn A<br><span style="opacity:.75;font-size:11.5px">TT Khuyến nông &amp; CĐS</span></div>
+    </div>
+  </div>
+  <div class="searchband">
+    <div class="searchwrap">
+      <h2>Tra cứu văn bản, quy trình, sổ tay hướng dẫn nghiệp vụ</h2>
+      <div class="searchbox">
+        <input id="q" type="text" placeholder="Nhập từ khóa: tên văn bản, số hiệu, hoặc nội dung bên trong tài liệu...">
+        <button onclick="search()">🔍 Tìm kiếm</button>
+      </div>
+      <div class="hints">
+        <b>Gợi ý:</b>
+        <span onclick="quick('chuyển mục đích')">chuyển mục đích</span>
+        <span onclick="quick('quan trắc môi trường')">quan trắc môi trường</span>
+        <span onclick="quick('OCOP')">OCOP</span>
+        <span onclick="quick('tiêm phòng')">tiêm phòng</span>
+        <span onclick="quick('phòng cháy rừng')">phòng cháy rừng</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <button class="btn-upload">➕ Nạp tài liệu mới</button>
+    <div class="facet">
+      <h3>Lĩnh vực</h3>
+      <ul id="fields"></ul>
+    </div>
+    <div class="facet">
+      <h3>Đơn vị ban hành</h3>
+      <ul id="units"></ul>
+    </div>
+    <div class="facet">
+      <h3>Tình trạng hiệu lực</h3>
+      <ul id="status"></ul>
+    </div>
+  </aside>
+
+  <main class="results">
+    <div class="bar">
+      <div class="count">Tìm thấy <b id="num">0</b> tài liệu</div>
+      <div class="tools">
+        <span style="font-size:13px;color:var(--muted)">Sắp xếp:</span>
+        <select onchange="render()" id="sort">
+          <option value="new">Mới nhất</option>
+          <option value="az">Tên A → Z</option>
+          <option value="unit">Theo đơn vị</option>
+        </select>
+      </div>
+    </div>
+    <div id="list"></div>
+  </main>
+</div>
+
+<footer>
+  Bản demo giao diện — dữ liệu mẫu. Hệ thống vận hành trên máy chủ nội bộ của Sở, dữ liệu lưu tại chỗ.
+</footer>
+
+<script>
+const DOCS = [
+  {t:"Quy trình cấp Giấy chứng nhận quyền sử dụng đất lần đầu", num:"QT-01/VPĐK", unit:"Văn phòng Đăng ký đất đai", field:"Đất đai", type:"pdf", status:"valid", date:"2026-03-12", snip:"...hồ sơ đề nghị <mark>cấp giấy chứng nhận quyền sử dụng đất</mark> lần đầu gồm đơn đăng ký, giấy tờ về quyền sử dụng đất, sơ đồ thửa đất..."},
+  {t:"Hướng dẫn thủ tục chuyển mục đích sử dụng đất nông nghiệp", num:"HD-22/VPĐK", unit:"Văn phòng Đăng ký đất đai", field:"Đất đai", type:"doc", status:"valid", date:"2026-04-02", snip:"...điều kiện <mark>chuyển mục đích</mark> sử dụng đất từ đất nông nghiệp sang đất ở phải phù hợp quy hoạch, kế hoạch sử dụng đất..."},
+  {t:"Hướng dẫn lấy mẫu quan trắc môi trường nước mặt", num:"HD-14/CCMT", unit:"Chi cục Bảo vệ môi trường", field:"Môi trường", type:"pdf", status:"valid", date:"2026-02-28", snip:"...vị trí và tần suất <mark>quan trắc môi trường</mark> nước mặt phải tuân thủ quy chuẩn kỹ thuật quốc gia hiện hành..."},
+  {t:"Sổ tay đánh giá, phân hạng sản phẩm OCOP cấp tỉnh", num:"ST-03/CCPTNT", unit:"Chi cục Phát triển nông thôn", field:"OCOP", type:"doc", status:"valid", date:"2026-01-20", snip:"...bộ tiêu chí đánh giá, phân hạng sản phẩm <mark>OCOP</mark> theo thang điểm, hồ sơ minh chứng và quy trình chấm điểm..."},
+  {t:"Quy trình tiêm phòng vắc xin cho đàn gia súc, gia cầm", num:"QT-08/CCTY", unit:"Chi cục Chăn nuôi và Thú y", field:"Thú y", type:"pdf", status:"review", date:"2025-11-05", snip:"...lịch <mark>tiêm phòng</mark> định kỳ, quy trình bảo quản vắc xin và xử lý phản ứng sau tiêm phòng cho đàn vật nuôi..."},
+  {t:"Sổ tay hướng dẫn phòng cháy, chữa cháy rừng mùa khô", num:"ST-09/CCKL", unit:"Chi cục Kiểm lâm", field:"Lâm nghiệp", type:"pdf", status:"valid", date:"2026-03-01", snip:"...phương án <mark>phòng cháy</mark> chữa cháy <mark>rừng</mark> trong mùa khô, phân công lực lượng và trang thiết bị ứng trực..."},
+  {t:"Hướng dẫn vận hành hồ chứa thủy lợi trong mùa mưa lũ", num:"HD-17/CCTL", unit:"Chi cục Thủy lợi", field:"Thủy lợi", type:"doc", status:"valid", date:"2026-05-10", snip:"...quy trình vận hành <mark>hồ chứa</mark> bảo đảm an toàn công trình và vùng hạ du trong mùa mưa lũ, phối hợp phòng chống thiên tai..."},
+  {t:"Sổ tay hướng dẫn xây dựng xã nông thôn mới nâng cao", num:"ST-07/CCPTNT", unit:"Chi cục Phát triển nông thôn", field:"Nông thôn mới", type:"pdf", status:"valid", date:"2026-01-08", snip:"...bộ tiêu chí xã <mark>nông thôn mới</mark> nâng cao, quy trình thẩm định, đánh giá và công nhận theo quy định..."},
+  {t:"Quy trình cấp phép khai thác khoáng sản làm VLXD", num:"QT-05/CCĐC", unit:"Chi cục Địa chất và Khoáng sản", field:"Khoáng sản", type:"pdf", status:"expired", date:"2024-08-15", snip:"...hồ sơ đề nghị cấp phép <mark>khai thác khoáng sản</mark> làm vật liệu xây dựng, đánh giá tác động môi trường kèm theo..."},
+];
+const FIELD_COLOR = {};
+let state={q:"", field:null, unit:null, status:null};
+const STATUS_LBL={valid:"Còn hiệu lực",expired:"Hết hiệu lực",review:"Đang rà soát"};
+
+function uniq(key){const m={};DOCS.forEach(d=>m[d[key]]=(m[d[key]]||0)+1);return m;}
+function stateKey(id){return id==='fields'?'field':id==='units'?'unit':'status';}
+function buildFacet(id,key,lblMap){
+  const m=uniq(key), el=document.getElementById(id), sk=stateKey(id);
+  let html=`<li class="${!state[sk]?'active':''}" onclick="setFacet('${sk}',null)">Tất cả <span class="cnt">${DOCS.length}</span></li>`;
+  Object.keys(m).sort().forEach(k=>{
+    const lbl=lblMap?lblMap[k]||k:k;
+    html+=`<li class="${state[sk]===k?'active':''}" onclick="setFacet('${sk}','${k.replace(/'/g,"\\'")}')">${lbl} <span class="cnt">${m[k]}</span></li>`;
+  });
+  el.innerHTML=html;
+}
+function setFacet(k,v){state[k]=v;refresh();}
+function quick(t){document.getElementById('q').value=t;state.q=t;refresh();}
+function search(){state.q=document.getElementById('q').value;refresh();}
+
+function filtered(){
+  return DOCS.filter(d=>{
+    if(state.field&&d.field!==state.field)return false;
+    if(state.unit&&d.unit!==state.unit)return false;
+    if(state.status&&d.status!==state.status)return false;
+    if(state.q){const q=state.q.toLowerCase();const hay=(d.t+" "+d.num+" "+d.snip+" "+d.field).toLowerCase();if(!hay.includes(q))return false;}
+    return true;
+  });
+}
+function fmtDate(s){const[y,m,d]=s.split('-');return `${d}/${m}/${y}`;}
+function render(){
+  let list=filtered();
+  const sort=document.getElementById('sort').value;
+  if(sort==='az')list.sort((a,b)=>a.t.localeCompare(b.t,'vi'));
+  else if(sort==='unit')list.sort((a,b)=>a.unit.localeCompare(b.unit,'vi'));
+  else list.sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('num').textContent=list.length;
+  document.getElementById('list').innerHTML=list.map(d=>`
+    <div class="doc">
+      <div class="head">
+        <div class="ficon ${d.type}">${d.type.toUpperCase()}</div>
+        <div style="flex:1">
+          <div class="title">${d.t}</div>
+          <div class="meta"><span>Số hiệu: ${d.num}</span><span>${d.unit}</span><span>Ban hành: ${fmtDate(d.date)}</span></div>
+        </div>
+        <div class="actions">
+          <button title="Xem">👁</button>
+          <button title="Tải về">⬇</button>
+        </div>
+      </div>
+      <div class="snippet">${d.snip}</div>
+      <div class="tags">
+        <span class="badge ${d.status}">${STATUS_LBL[d.status]}</span>
+        <span class="tag">${d.field}</span>
+        <span class="tag unit">${d.unit}</span>
+      </div>
+    </div>`).join('') || '<div class="doc" style="text-align:center;color:var(--muted);padding:30px">Không tìm thấy tài liệu phù hợp. Thử từ khóa khác hoặc bỏ bớt bộ lọc.</div>';
+}
+function refresh(){
+  buildFacet('fields','field');
+  buildFacet('units','unit');
+  buildFacet('status','status',STATUS_LBL);
+  render();
+}
+document.getElementById('q').addEventListener('keydown',e=>{if(e.key==='Enter')search();});
+refresh();
+</script>
+</body>
+</html>

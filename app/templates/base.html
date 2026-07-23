@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block tieu_de %}Kho Sổ tay hướng dẫn điện tử{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% if request.endpoint != 'auth.dang_nhap' %}
+<header>
+    <div class="topbar">
+        <div class="emblem">NN&amp;MT</div>
+        <div class="org">
+            <h1>Kho Sổ tay hướng dẫn điện tử</h1>
+            <p>Sở Nông nghiệp và Môi trường tỉnh Sơn La</p>
+        </div>
+        <nav class="topnav">
+            <a href="{{ url_for('main.trang_chu') }}" class="{{ 'active' if request.endpoint == 'main.trang_chu' else '' }}">Trang chủ</a>
+            {% if current_user.is_authenticated and current_user.la_admin() %}
+            <a href="{{ url_for('admin.tong_quan') }}" class="{{ 'active' if request.endpoint and request.endpoint.startswith('admin.') else '' }}">Quản trị</a>
+            {% endif %}
+        </nav>
+        {% if current_user.is_authenticated %}
+        <div class="user">
+            <div class="avatar">{{ current_user.ho_ten[:1] | upper }}</div>
+            <div>{{ current_user.ho_ten }}<br><span style="opacity:.75;font-size:11.5px">{{ current_user.don_vi.ten if current_user.don_vi else current_user.vai_tro }}</span></div>
+        </div>
+        <a href="{{ url_for('auth.dang_xuat') }}" class="dang-xuat">Đăng xuất</a>
+        {% else %}
+        <a href="{{ url_for('auth.dang_nhap') }}" class="dang-xuat">Đăng nhập cán bộ</a>
+        {% endif %}
+    </div>
+</header>
+{% endif %}
+
+{% with thong_bao_list = get_flashed_messages(with_categories=true) %}
+    {% if thong_bao_list %}
+    <div style="max-width:1240px;margin:14px auto 0;padding:0 24px">
+        {% for muc, noi_dung in thong_bao_list %}
+            <div class="thong-bao {{ muc }}">{{ noi_dung }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+{% block noi_dung %}{% endblock %}
+
+{% if request.endpoint != 'auth.dang_nhap' %}
+<footer class="chan-trang">
+    <div class="chan-trang-noi-dung">
+        <div class="cot cot-gioi-thieu">
+            <div class="chan-logo">
+                <div class="emblem">NN&amp;MT</div>
+                <div>
+                    <strong>Kho Sổ tay hướng dẫn điện tử</strong>
+                    <div>Sở Nông nghiệp và Môi trường tỉnh Sơn La</div>
+                </div>
+            </div>
+            <p>Tòa nhà 6 T2, Trung tâm hành chính tỉnh, Khu Quảng trường Tây Bắc,<br>Phường Chiềng Cơi, Tỉnh Sơn La</p>
+            <p>Điện thoại: 02123.799.888 &nbsp;|&nbsp; Email: <a href="mailto:snnmt@sonla.gov.vn">snnmt@sonla.gov.vn</a></p>
+        </div>
+
+        <div class="cot">
+            <h4>Liên kết nhanh</h4>
+            <a href="{{ url_for('main.trang_chu') }}">Trang chủ</a>
+            <a href="{{ url_for('main.danh_sach_thong_bao') }}">Thông báo</a>
+            <a href="{{ url_for('auth.dang_nhap') }}">Đăng nhập cán bộ</a>
+        </div>
+
+        <div class="cot cot-tinh">
+            <div class="tinh-badge">🏞️</div>
+            <div>
+                <strong>Sơn La</strong>
+                <div>Xanh – Nông nghiệp sạch<br>Môi trường bền vững</div>
+            </div>
+        </div>
+    </div>
+    <div class="chan-trang-ban-quyen">© {{ nam_hien_tai }} Sở Nông nghiệp và Môi trường tỉnh Sơn La.</div>
+</footer>
+
+<div id="ai-chat-widget">
+    <button id="ai-chat-toggle" type="button">💬 Hỏi trợ lý AI</button>
+    <div id="ai-chat-panel" hidden>
+        <div class="ai-chat-header">
+            <span>🤖 Trợ lý tra cứu AI</span>
+            <button id="ai-chat-close" type="button" aria-label="Đóng">✕</button>
+        </div>
+        <div id="ai-chat-messages" class="ai-chat-messages">
+            <div class="ai-chat-msg ai-chat-msg-bot">Xin chào! Tôi có thể giúp bạn tra cứu nhanh nội dung sổ tay, quy trình, văn bản trong kho. Bạn muốn hỏi gì?</div>
+        </div>
+        <form id="ai-chat-form" class="ai-chat-form">
+            <input type="text" id="ai-chat-input" placeholder="Nhập câu hỏi..." autocomplete="off" maxlength="500">
+            <button type="submit">Gửi</button>
+        </form>
+    </div>
+</div>
+<script>
+(function () {
+    var toggle = document.getElementById('ai-chat-toggle');
+    var panel = document.getElementById('ai-chat-panel');
+    var closeBtn = document.getElementById('ai-chat-close');
+    var messages = document.getElementById('ai-chat-messages');
+    var form = document.getElementById('ai-chat-form');
+    var input = document.getElementById('ai-chat-input');
+    var diemGuiHoi = {{ url_for('chat.hoi') | tojson }};
+    var lichSu = [];
+
+    toggle.addEventListener('click', function () {
+        panel.hidden = !panel.hidden;
+        if (!panel.hidden) input.focus();
+    });
+    closeBtn.addEventListener('click', function () { panel.hidden = true; });
+
+    function themTinNhan(vaiTro, noiDung, nguon) {
+        var div = document.createElement('div');
+        div.className = 'ai-chat-msg ' + (vaiTro === 'nguoi_dung' ? 'ai-chat-msg-user' : 'ai-chat-msg-bot');
+        div.textContent = noiDung;
+        messages.appendChild(div);
+        if (nguon && nguon.length) {
+            var ds = document.createElement('div');
+            ds.className = 'ai-chat-nguon';
+            nguon.forEach(function (n) {
+                var a = document.createElement('a');
+                a.href = n.url;
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.textContent = '📄 ' + n.tieu_de + (n.so_hieu ? ' (' + n.so_hieu + ')' : '');
+                ds.appendChild(a);
+            });
+            messages.appendChild(ds);
+        }
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var cauHoi = input.value.trim();
+        if (!cauHoi) return;
+
+        themTinNhan('nguoi_dung', cauHoi);
+        lichSu.push({ vai_tro: 'nguoi_dung', noi_dung: cauHoi });
+        input.value = '';
+        input.disabled = true;
+
+        var dangGoi = document.createElement('div');
+        dangGoi.className = 'ai-chat-msg ai-chat-msg-bot ai-chat-loading';
+        dangGoi.textContent = 'Đang tra cứu...';
+        messages.appendChild(dangGoi);
+        messages.scrollTop = messages.scrollHeight;
+
+        fetch(diemGuiHoi, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ cau_hoi: cauHoi, lich_su: lichSu.slice(-6) })
+        }).then(function (r) {
+            return r.json().then(function (data) { return { ok: r.ok, data: data }; });
+        }).then(function (res) {
+            dangGoi.remove();
+            if (!res.ok) {
+                themTinNhan('tro_ly', res.data.loi || 'Có lỗi xảy ra, vui lòng thử lại.');
+                return;
+            }
+            themTinNhan('tro_ly', res.data.tra_loi, res.data.nguon);
+            lichSu.push({ vai_tro: 'tro_ly', noi_dung: res.data.tra_loi });
+        }).catch(function () {
+            dangGoi.remove();
+            themTinNhan('tro_ly', 'Không kết nối được máy chủ, vui lòng thử lại.');
+        }).finally(function () {
+            input.disabled = false;
+            input.focus();
+        });
+    });
+})();
+</script>
+{% endif %}
+</body>
+</html>

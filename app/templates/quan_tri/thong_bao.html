@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block tieu_de %}Quản trị - Thông báo{% endblock %}
+{% block noi_dung %}
+<div style="max-width:900px;margin:24px auto;padding:0 24px">
+    {% include "quan_tri/_thanh_dieu_huong.html" %}
+
+    <div class="the-noi-dung">
+        <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Đăng thông báo mới</h3>
+        <form method="POST" action="{{ url_for('admin.them_thong_bao') }}" style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+            <input type="text" name="tieu_de" placeholder="Tiêu đề thông báo" required style="flex:2;min-width:240px;padding:9px 12px;border:1px solid #bbb;border-radius:6px;font-family:inherit">
+            <select name="tai_lieu_id" style="flex:1;min-width:200px;padding:9px 12px;border:1px solid #bbb;border-radius:6px;font-family:inherit;background:#fff">
+                <option value="">-- Không gắn tài liệu --</option>
+                {% for tl in danh_sach_tai_lieu %}
+                <option value="{{ tl.id }}">{{ tl.tieu_de }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="nut-chinh" style="width:auto;padding:9px 16px">Đăng</button>
+        </form>
+
+        <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Đã đăng ({{ danh_sach|length }})</h3>
+        {% for tb in danh_sach %}
+        <details style="border-bottom:1px solid var(--line);padding:8px 0">
+            <summary style="cursor:pointer;font-size:14px;display:flex;justify-content:space-between;gap:10px">
+                <span>{{ tb.tieu_de }}{% if tb.tai_lieu %} <span style="color:var(--muted);font-size:12.5px">→ {{ tb.tai_lieu.tieu_de }}</span>{% endif %}</span>
+                <span style="color:var(--muted);font-size:12.5px;white-space:nowrap">{{ tb.ngay_dang.strftime('%d/%m/%Y') }}</span>
+            </summary>
+            <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+                <form method="POST" action="{{ url_for('admin.sua_thong_bao', thong_bao_id=tb.id) }}" style="display:flex;gap:8px;flex:1;min-width:280px;flex-wrap:wrap">
+                    <input type="text" name="tieu_de" value="{{ tb.tieu_de }}" required style="flex:2;min-width:200px;padding:8px 10px;border:1px solid #bbb;border-radius:6px;font-family:inherit">
+                    <select name="tai_lieu_id" style="flex:1;min-width:180px;padding:8px 10px;border:1px solid #bbb;border-radius:6px;font-family:inherit;background:#fff">
+                        <option value="">-- Không gắn tài liệu --</option>
+                        {% for tl in danh_sach_tai_lieu %}
+                        <option value="{{ tl.id }}" {{ 'selected' if tb.tai_lieu_id == tl.id }}>{{ tl.tieu_de }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="nut-chinh" style="width:auto;padding:8px 14px">Lưu</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.xoa_thong_bao', thong_bao_id=tb.id) }}" onsubmit="return confirm('Xoá thông báo này?');">
+                    <button type="submit" style="border:1px solid var(--line);background:#fff;color:var(--red);border-radius:6px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit">Xoá</button>
+                </form>
+            </div>
+        </details>
+        {% else %}
+        <p style="color:var(--muted)">Chưa có thông báo nào.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

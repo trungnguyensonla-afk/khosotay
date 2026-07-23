@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block tieu_de %}Quản trị - Tổng quan{% endblock %}
+{% block noi_dung %}
+<div style="max-width:1000px;margin:24px auto;padding:0 24px">
+    {% include "quan_tri/_thanh_dieu_huong.html" %}
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px">
+        <div class="the-noi-dung" style="text-align:center;padding:20px">
+            <div style="font-size:32px;font-weight:700;color:var(--green-dark)">{{ tong_so_tai_lieu }}</div>
+            <div style="color:var(--muted);font-size:13px">Tổng số tài liệu</div>
+        </div>
+        <div class="the-noi-dung" style="text-align:center;padding:20px">
+            <div style="font-size:32px;font-weight:700;color:var(--green-dark)">{{ tong_so_nguoi_dung }}</div>
+            <div style="color:var(--muted);font-size:13px">Tổng số người dùng</div>
+        </div>
+        <div class="the-noi-dung" style="text-align:center;padding:20px">
+            <div style="font-size:32px;font-weight:700;color:var(--green-dark)">{{ theo_tinh_trang.get('Còn hiệu lực', 0) }}</div>
+            <div style="color:var(--muted);font-size:13px">Còn hiệu lực</div>
+        </div>
+        <div class="the-noi-dung" style="text-align:center;padding:20px">
+            <div style="font-size:32px;font-weight:700;color:var(--red)">{{ theo_tinh_trang.get('Hết hiệu lực', 0) }}</div>
+            <div style="color:var(--muted);font-size:13px">Hết hiệu lực</div>
+        </div>
+        <div class="the-noi-dung" style="text-align:center;padding:20px">
+            <div style="font-size:32px;font-weight:700;color:var(--amber)">{{ theo_tinh_trang.get('Đang rà soát', 0) }}</div>
+            <div style="color:var(--muted);font-size:13px">Đang rà soát</div>
+        </div>
+    </div>
+
+    <div class="dong-2-cot">
+        <div class="the-noi-dung">
+            <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Số tài liệu theo lĩnh vực</h3>
+            {% for ten, so_luong in theo_linh_vuc %}
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px">
+                <span>{{ ten }}</span><span style="color:var(--muted)">{{ so_luong }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="the-noi-dung">
+            <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Số tài liệu theo đơn vị</h3>
+            {% for ten, so_luong in theo_don_vi %}
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:14px">
+                <span>{{ ten }}</span><span style="color:var(--muted)">{{ so_luong }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

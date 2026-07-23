@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block tieu_de %}Quản trị - Sao lưu{% endblock %}
+{% block noi_dung %}
+<div style="max-width:800px;margin:24px auto;padding:0 24px">
+    {% include "quan_tri/_thanh_dieu_huong.html" %}
+
+    <div class="the-noi-dung" style="margin-bottom:20px">
+        <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Sao lưu dữ liệu</h3>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:16px">
+            Xuất toàn bộ database và file tài liệu gốc ra thư mục <code>backups/</code> có ngày giờ.
+            Nên chạy định kỳ (VD: cuối mỗi ngày làm việc).
+        </p>
+        <form method="POST" action="{{ url_for('admin.chay_sao_luu') }}">
+            <button type="submit" class="nut-chinh" style="width:auto;padding:11px 24px">💾 Sao lưu ngay</button>
+        </form>
+    </div>
+
+    <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Các bản sao lưu đã có ({{ danh_sach|length }})</h3>
+    {% if danh_sach %}
+        {% for b in danh_sach %}
+        <div class="the-noi-dung" style="margin-bottom:8px;padding:14px 18px;display:flex;justify-content:space-between">
+            <span>{{ b.ten }}</span>
+            <span style="color:var(--muted)">{{ b.dung_luong_mb }} MB</span>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p style="color:var(--muted)">Chưa có bản sao lưu nào.</p>
+    {% endif %}
+</div>
+{% endblock %}

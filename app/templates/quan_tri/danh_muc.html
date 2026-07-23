@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block tieu_de %}Quản trị - Danh mục{% endblock %}
+{% block noi_dung %}
+<div style="max-width:900px;margin:24px auto;padding:0 24px">
+    {% include "quan_tri/_thanh_dieu_huong.html" %}
+
+    <div class="dong-2-cot">
+        <div class="the-noi-dung">
+            <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Lĩnh vực ({{ danh_sach_linh_vuc|length }})</h3>
+
+            <form method="POST" action="{{ url_for('admin.them_linh_vuc') }}" style="display:flex;gap:8px;margin-bottom:16px">
+                <input type="text" name="ten" placeholder="Tên lĩnh vực mới" required style="flex:1;padding:9px 12px;border:1px solid #bbb;border-radius:6px;font-family:inherit">
+                <button type="submit" class="nut-chinh" style="width:auto;padding:9px 16px">Thêm</button>
+            </form>
+
+            {% for lv in danh_sach_linh_vuc %}
+            <details style="border-bottom:1px solid var(--line);padding:8px 0">
+                <summary style="cursor:pointer;font-size:14px">{{ lv.ten }}</summary>
+                <form method="POST" action="{{ url_for('admin.sua_linh_vuc', linh_vuc_id=lv.id) }}" style="display:flex;gap:8px;margin-top:8px">
+                    <input type="text" name="ten" value="{{ lv.ten }}" required style="flex:1;padding:8px 10px;border:1px solid #bbb;border-radius:6px;font-family:inherit">
+                    <button type="submit" class="nut-chinh" style="width:auto;padding:8px 14px">Lưu</button>
+                </form>
+            </details>
+            {% endfor %}
+        </div>
+
+        <div class="the-noi-dung">
+            <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Đơn vị quản lý ({{ danh_sach_don_vi|length }})</h3>
+
+            <form method="POST" action="{{ url_for('admin.them_don_vi') }}" style="display:flex;gap:8px;margin-bottom:16px">
+                <input type="text" name="ten" placeholder="Tên đơn vị mới" required style="flex:1;padding:9px 12px;border:1px solid #bbb;border-radius:6px;font-family:inherit">
+                <button type="submit" class="nut-chinh" style="width:auto;padding:9px 16px">Thêm</button>
+            </form>
+
+            {% for dv in danh_sach_don_vi %}
+            <details style="border-bottom:1px solid var(--line);padding:8px 0">
+                <summary style="cursor:pointer;font-size:14px">{{ dv.ten }}</summary>
+                <form method="POST" action="{{ url_for('admin.sua_don_vi', don_vi_id=dv.id) }}" style="display:flex;gap:8px;margin-top:8px">
+                    <input type="text" name="ten" value="{{ dv.ten }}" required style="flex:1;padding:8px 10px;border:1px solid #bbb;border-radius:6px;font-family:inherit">
+                    <button type="submit" class="nut-chinh" style="width:auto;padding:8px 14px">Lưu</button>
+                </form>
+            </details>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

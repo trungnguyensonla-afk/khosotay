@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block tieu_de %}Quản trị - Người dùng{% endblock %}
+{% block noi_dung %}
+<div style="max-width:900px;margin:24px auto;padding:0 24px">
+    {% include "quan_tri/_thanh_dieu_huong.html" %}
+
+    <div class="the-noi-dung" style="margin-bottom:20px">
+        <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Thêm tài khoản mới</h3>
+        <form method="POST" action="{{ url_for('admin.them_nguoi_dung') }}">
+            <div class="dong-2-cot">
+                <div class="truong-nhap"><label>Tên đăng nhập</label><input type="text" name="ten_dang_nhap" required></div>
+                <div class="truong-nhap"><label>Mật khẩu</label><input type="password" name="mat_khau" required minlength="6"></div>
+            </div>
+            <div class="dong-2-cot">
+                <div class="truong-nhap"><label>Họ tên</label><input type="text" name="ho_ten" required></div>
+                <div class="truong-nhap"><label>Vai trò</label>
+                    <select name="vai_tro">
+                        {% for vt, nhan in nhan_vai_tro.items() %}
+                        <option value="{{ vt }}">{{ nhan }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="truong-nhap">
+                <label>Đơn vị công tác</label>
+                <select name="don_vi_id">
+                    <option value="">-- Không chọn --</option>
+                    {% for dv in danh_sach_don_vi %}
+                    <option value="{{ dv.id }}">{{ dv.ten }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="nut-chinh" style="width:auto;padding:10px 22px">Tạo tài khoản</button>
+        </form>
+    </div>
+
+    <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Danh sách tài khoản ({{ danh_sach|length }})</h3>
+    {% for nd in danh_sach %}
+    <div class="the-noi-dung" style="margin-bottom:10px;padding:16px 18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+            <div>
+                <strong>{{ nd.ho_ten }}</strong> <span style="color:var(--muted)">({{ nd.ten_dang_nhap }})</span>
+                <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+                    <span class="tag">{{ nhan_vai_tro.get(nd.vai_tro, nd.vai_tro) }}</span>
+                    {% if nd.don_vi %}<span class="tag unit">{{ nd.don_vi.ten }}</span>{% endif %}
+                    {% if not nd.dang_hoat_dong %}<span class="badge expired">Đã khóa</span>{% endif %}
+                    {% if nd.id == current_user.id %}<span class="badge valid">Bạn</span>{% endif %}
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+                <details>
+                    <summary style="cursor:pointer;padding:8px 14px;border:1px solid var(--line);border-radius:6px;display:inline-block;font-size:13.5px">Sửa</summary>
+                    <form method="POST" action="{{ url_for('admin.sua_nguoi_dung', nguoi_dung_id=nd.id) }}" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line);min-width:320px">
+                        <div class="dong-2-cot">
+                            <div class="truong-nhap"><label>Họ tên</label><input type="text" name="ho_ten" value="{{ nd.ho_ten }}" required></div>
+                            <div class="truong-nhap"><label>Vai trò</label>
+                                <select name="vai_tro">
+                                    {% for vt, nhan in nhan_vai_tro.items() %}
+                                    <option value="{{ vt }}" {{ 'selected' if vt == nd.vai_tro }}>{{ nhan }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="dong-2-cot">
+                            <div class="truong-nhap"><label>Đơn vị</label>
+                                <select name="don_vi_id">
+                                    <option value="">-- Không chọn --</option>
+                                    {% for dv in danh_sach_don_vi %}
+                                    <option value="{{ dv.id }}" {{ 'selected' if nd.don_vi_id == dv.id }}>{{ dv.ten }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="truong-nhap"><label>Đặt lại mật khẩu (để trống nếu không đổi)</label><input type="password" name="mat_khau_moi" minlength="6"></div>
+                        </div>
+                        <button type="submit" class="nut-chinh" style="width:auto;padding:9px 20px">Lưu thay đổi</button>
+                    </form>
+                </details>
+                {% if nd.id != current_user.id %}
+                <form method="POST" action="{{ url_for('admin.khoa_mo_nguoi_dung', nguoi_dung_id=nd.id) }}">
+                    <button type="submit" class="nut-chinh" style="width:auto;padding:8px 14px;background:{{ 'var(--green)' if not nd.dang_hoat_dong else 'var(--red)' }}">
+                        {{ 'Mở khóa' if not nd.dang_hoat_dong else 'Khóa' }}
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

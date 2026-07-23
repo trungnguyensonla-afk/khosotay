@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block tieu_de %}{{ tl.tieu_de }} - Kho Sổ tay hướng dẫn điện tử{% endblock %}
+{% block noi_dung %}
+<div style="max-width:1100px;margin:24px auto;padding:0 24px">
+    <p><a href="{{ url_for('main.trang_chu') }}" style="color:var(--green);font-weight:600">← Về trang chủ</a></p>
+
+    <div class="the-noi-dung" style="margin-bottom:20px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap">
+            <div>
+                <h1 style="margin-bottom:8px">{{ tl.tieu_de }}</h1>
+                <div class="meta" style="display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--muted);font-size:13.5px">
+                    {% if tl.so_hieu %}<span>Số hiệu: {{ tl.so_hieu }}</span>{% endif %}
+                    {% if tl.co_quan_ban_hanh %}<span>Cơ quan ban hành: {{ tl.co_quan_ban_hanh }}</span>{% endif %}
+                    {% if tl.phien_ban %}<span>Phiên bản: {{ tl.phien_ban }}</span>{% endif %}
+                    {% if tl.ngay_ban_hanh %}<span>Ban hành: {{ tl.ngay_ban_hanh.strftime('%d/%m/%Y') }}</span>{% endif %}
+                    {% if tl.ngay_het_hieu_luc %}<span>Hết hiệu lực: {{ tl.ngay_het_hieu_luc.strftime('%d/%m/%Y') }}</span>{% endif %}
+                    <span>Nạp lúc: {{ tl.ngay_nap.strftime('%d/%m/%Y %H:%M') }}</span>
+                    {% if tl.nguoi_nap %}<span>Người nạp: {{ tl.nguoi_nap.ho_ten }}</span>{% endif %}
+                </div>
+            </div>
+            <div style="display:flex;gap:10px;flex-shrink:0">
+                {% if current_user.is_authenticated and current_user.la_bien_tap() %}
+                <a href="{{ url_for('main.sua_tai_lieu', tai_lieu_id=tl.id) }}">
+                    <button class="nut-chinh" type="button" style="width:auto;padding:10px 22px;background:#fff;color:var(--green-dark);border:1px solid var(--green)">✏ Sửa thông tin</button>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="tags" style="margin-top:14px;padding-left:0">
+            <span class="badge {{ status_class }}">{{ tl.tinh_trang or 'Chưa xác định' }}</span>
+            {% if tl.trang_thai_xu_ly == 'dang_xu_ly' %}<span class="badge review">⏳ Đang OCR</span>{% endif %}
+            {% if tl.trang_thai_xu_ly == 'loi' %}<span class="badge expired">⚠ Lỗi xử lý nội dung</span>{% endif %}
+            {% if tl.loai_van_ban %}<span class="tag">{{ tl.loai_van_ban }}</span>{% endif %}
+            {% if tl.linh_vuc %}<span class="tag">{{ tl.linh_vuc.ten }}</span>{% endif %}
+            {% if tl.don_vi %}<span class="tag unit">{{ tl.don_vi.ten }}</span>{% endif %}
+        </div>
+    </div>
+
+    <div class="the-noi-dung" style="margin-bottom:20px">
+        <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">File đính kèm ({{ danh_sach_tep|length }})</h3>
+        {% for muc in danh_sach_tep %}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;{{ 'border-bottom:1px solid var(--line)' if not loop.last }}">
+            <div style="display:flex;align-items:center;gap:8px">
+                <span>{{ '📄' if muc.loai_file == 'pdf' else '📝' }}</span>
+                <span>{{ muc.ten_hien_thi }}</span>
+                {% if muc.tep.trang_thai_xu_ly == 'dang_xu_ly' %}<span class="badge review">⏳ Đang OCR</span>{% endif %}
+                {% if muc.tep.trang_thai_xu_ly == 'loi' %}<span class="badge expired">⚠ Lỗi xử lý</span>{% endif %}
+            </div>
+            <div style="display:flex;gap:14px;flex-shrink:0">
+                {% if muc.loai_file == 'pdf' %}
+                <a href="{{ url_for('main.file_tai_lieu', tai_lieu_id=tl.id, tep_id=muc.tep.id) }}" target="_blank" style="font-size:13px;color:var(--green-dark);font-weight:600">Xem</a>
+                {% endif %}
+                <a href="{{ url_for('main.file_tai_lieu', tai_lieu_id=tl.id, tep_id=muc.tep.id, tai_ve=1) }}" style="font-size:13px;color:var(--green-dark);font-weight:600">Tải về</a>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if tep_xem_truoc_id %}
+        <iframe src="{{ url_for('main.file_tai_lieu', tai_lieu_id=tl.id, tep_id=tep_xem_truoc_id) }}" style="width:100%;height:70vh;border:1px solid var(--line);border-radius:8px;margin-top:16px"></iframe>
+        {% else %}
+        <p style="color:var(--muted);margin-top:12px">Không có file PDF nào để xem trước trực tiếp — bấm "Tải về" để mở bằng ứng dụng phù hợp.</p>
+        {% endif %}
+    </div>
+
+    <div class="the-noi-dung">
+        <h3 style="font-size:14px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:12px">Nội dung trích xuất (phục vụ tìm kiếm)</h3>
+        {% if tl.trang_thai_xu_ly == 'dang_xu_ly' %}
+        <p style="color:var(--amber)">⏳ Đang chạy OCR tiếng Việt ở chế độ nền, tải lại trang sau ít phút để xem nội dung.</p>
+        {% elif tl.trang_thai_xu_ly == 'loi' %}
+        <p style="color:var(--red)">⚠ Chưa trích xuất được nội dung tài liệu này.</p>
+        {% elif tl.noi_dung_text %}
+        <div style="max-height:400px;overflow-y:auto;white-space:pre-wrap;font-size:14px;line-height:1.6;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:16px">{{ tl.noi_dung_text[:5000] }}{% if tl.noi_dung_text|length > 5000 %}…
+
+[Còn tiếp — {{ tl.noi_dung_text|length }} ký tự tổng cộng, xem đầy đủ trong file gốc]{% endif %}</div>
+        {% else %}
+        <p style="color:var(--muted)">Chưa có nội dung trích xuất.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

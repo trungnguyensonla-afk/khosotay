@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block tieu_de %}Nạp tài liệu - Kho Sổ tay hướng dẫn điện tử{% endblock %}
+{% block noi_dung %}
+<div style="max-width:760px;margin:32px auto;padding:0 24px">
+    <div class="the-noi-dung">
+        <h1>Nạp tài liệu mới</h1>
+        <p class="mo-ta">Tải file PDF hoặc Word và điền thông tin tài liệu. Nếu sổ tay gồm nhiều file (VD: Phần 1, Phần 2, Phụ lục...), chọn nhiều file cùng lúc - hệ thống sẽ gộp chung vào 1 tài liệu.</p>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="truong-nhap">
+                <label for="file">Chọn file (PDF hoặc Word - chọn được nhiều file) *</label>
+                <input type="file" id="file" name="file" accept=".pdf,.doc,.docx" multiple required>
+            </div>
+
+            <div class="truong-nhap">
+                <label for="tieu_de">Tiêu đề tài liệu *</label>
+                <input type="text" id="tieu_de" name="tieu_de" required>
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="so_hieu">Số hiệu văn bản</label>
+                    <input type="text" id="so_hieu" name="so_hieu" placeholder="VD: 1693/SKHCN-CĐS">
+                </div>
+                <div class="truong-nhap">
+                    <label for="phien_ban">Phiên bản</label>
+                    <input type="text" id="phien_ban" name="phien_ban" placeholder="VD: 1.0">
+                </div>
+            </div>
+
+            <div class="truong-nhap">
+                <label for="co_quan_ban_hanh">Cơ quan ban hành</label>
+                <input type="text" id="co_quan_ban_hanh" name="co_quan_ban_hanh" placeholder="VD: UBND tỉnh Sơn La">
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="linh_vuc_id">Lĩnh vực</label>
+                    <select id="linh_vuc_id" name="linh_vuc_id">
+                        <option value="">-- Chọn lĩnh vực --</option>
+                        {% for lv in danh_sach_linh_vuc %}
+                        <option value="{{ lv.id }}">{{ lv.ten }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="truong-nhap">
+                    <label for="don_vi_id">Đơn vị quản lý</label>
+                    <select id="don_vi_id" name="don_vi_id">
+                        <option value="">-- Chọn đơn vị --</option>
+                        {% for dv in danh_sach_don_vi %}
+                        <option value="{{ dv.id }}">{{ dv.ten }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="loai_van_ban">Loại văn bản</label>
+                    <select id="loai_van_ban" name="loai_van_ban">
+                        <option value="">-- Chọn loại --</option>
+                        {% for lvb in loai_van_ban_lua_chon %}
+                        <option value="{{ lvb }}">{{ lvb }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="truong-nhap">
+                    <label for="tinh_trang">Tình trạng hiệu lực</label>
+                    <select id="tinh_trang" name="tinh_trang">
+                        {% for tt in tinh_trang_lua_chon %}
+                        <option value="{{ tt }}" {{ 'selected' if tt == 'Còn hiệu lực' }}>{{ tt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="dong-2-cot">
+                <div class="truong-nhap">
+                    <label for="ngay_ban_hanh">Ngày ban hành</label>
+                    <input type="date" id="ngay_ban_hanh" name="ngay_ban_hanh">
+                </div>
+                <div class="truong-nhap">
+                    <label for="ngay_het_hieu_luc">Ngày hết hiệu lực (nếu có)</label>
+                    <input type="date" id="ngay_het_hieu_luc" name="ngay_het_hieu_luc">
+                </div>
+            </div>
+
+            <button type="submit" class="nut-chinh">Nạp tài liệu</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

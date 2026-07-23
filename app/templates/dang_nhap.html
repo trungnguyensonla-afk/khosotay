@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block tieu_de %}Đăng nhập - Kho Sổ Tay Hướng Dẫn Điện Tử{% endblock %}
+{% block noi_dung %}
+<div class="trang-dang-nhap">
+    <div class="khung-dang-nhap">
+        <h1>Kho Sổ Tay Hướng Dẫn Điện Tử</h1>
+        <p class="mo-ta">Sở Nông nghiệp và Môi trường tỉnh Sơn La</p>
+
+        <form method="POST">
+            <div class="truong-nhap">
+                <label for="ten_dang_nhap">Tên đăng nhập</label>
+                <input type="text" id="ten_dang_nhap" name="ten_dang_nhap" required autofocus>
+            </div>
+            <div class="truong-nhap">
+                <label for="mat_khau">Mật khẩu</label>
+                <input type="password" id="mat_khau" name="mat_khau" required>
+            </div>
+            <button type="submit" class="nut-chinh">Đăng nhập</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

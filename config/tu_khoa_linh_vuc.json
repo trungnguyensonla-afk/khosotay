@@ -1,0 +1,20 @@
+{
+  "_huong_dan": "File này cấu hình bộ từ khóa để tự động gợi ý lĩnh vực khi nạp tài liệu (mục 4.6 spec). Admin có thể sửa trực tiếp file này (thêm/bớt từ khóa, thêm lĩnh vực mới) - không cần khởi động lại ứng dụng, hệ thống đọc lại mỗi lần nạp tài liệu. Tên lĩnh vực phải khớp đúng chính tả với tên đã có trong danh mục Lĩnh vực.",
+
+  "Đất đai": ["giấy chứng nhận quyền sử dụng đất", "chuyển mục đích", "thu hồi đất", "giao đất", "cho thuê đất", "quy hoạch sử dụng đất"],
+  "Môi trường": ["đánh giá tác động môi trường", "quan trắc", "nước thải", "khí thải", "chất thải rắn", "chất thải nguy hại", "giấy phép môi trường"],
+  "Khoáng sản": ["khai thác khoáng sản", "thăm dò", "cấp phép khoáng sản", "vật liệu xây dựng"],
+  "Trồng trọt": ["trồng trọt", "canh tác", "giống cây trồng", "phân bón", "cà phê", "cây ăn quả"],
+  "Chăn nuôi": ["chăn nuôi", "gia súc", "gia cầm", "thức ăn chăn nuôi"],
+  "Thú y": ["thú y", "tiêm phòng", "vắc xin", "dịch bệnh động vật", "kiểm dịch động vật"],
+  "Lâm nghiệp": ["lâm nghiệp", "kiểm lâm", "bảo vệ rừng", "lâm sản", "phòng cháy chữa cháy rừng", "trồng rừng"],
+  "Bảo vệ thực vật": ["bảo vệ thực vật", "kiểm dịch thực vật", "thuốc bảo vệ thực vật", "sâu bệnh"],
+  "Thủy sản": ["thủy sản", "nuôi trồng thủy sản", "khai thác thủy sản", "giống thủy sản"],
+  "Thủy lợi": ["thủy lợi", "công trình thủy lợi", "hồ chứa", "đập", "kênh mương", "tưới tiêu"],
+  "Tài nguyên nước": ["tài nguyên nước", "nước ngầm", "nước mặt", "giấy phép khai thác nước", "lưu vực sông"],
+  "Phòng chống thiên tai": ["phòng chống thiên tai", "lũ lụt", "sạt lở", "hạn hán", "ứng phó thiên tai", "tìm kiếm cứu nạn"],
+  "OCOP": ["OCOP", "sản phẩm nông thôn", "phân hạng sản phẩm", "mỗi xã một sản phẩm"],
+  "Nông thôn mới": ["nông thôn mới", "xã đạt chuẩn", "tiêu chí nông thôn"],
+  "Khuyến nông": ["khuyến nông", "mô hình trình diễn", "chuyển giao kỹ thuật", "tập huấn"],
+  "Phát triển nông thôn": ["phát triển nông thôn", "hợp tác xã", "kinh tế hợp tác", "giảm nghèo"]
+}

@@ -1,0 +1,25 @@
+# Kho Sổ Tay Hướng Dẫn Điện Tử - thư viện Python theo mục 2 của spec
+
+# Khung web
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+python-dotenv
+
+# Cơ sở dữ liệu
+psycopg2-binary
+
+# Máy chủ chạy trên Windows
+waitress
+
+# Đọc / trích xuất nội dung file (dùng ở Giai đoạn 1 - phần nạp tài liệu)
+pdfplumber
+PyPDF2
+pdf2image
+python-docx
+pytesseract
+Pillow
+
+# Chatbox AI hỏi-đáp trên tài liệu (Giai đoạn 3)
+anthropic

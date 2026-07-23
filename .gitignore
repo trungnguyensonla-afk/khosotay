@@ -1,0 +1,17 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+data/files/
+backups/
+*.exe
+*.msix
+instance/
+.pytest_cache/
+
+# File tham khảo/mẫu rời rạc ở gốc dự án, không thuộc mã nguồn app
+552.pdf.pdf
+baner.png
+giaodien.png
+DANH_SACH_XA_THUA_DAT_*.xlsx
