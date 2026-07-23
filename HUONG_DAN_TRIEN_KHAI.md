@@ -16,25 +16,17 @@
 
 ## 2. Đưa mã nguồn lên máy chủ
 
-Dự án hiện **chưa dùng Git**, nên cách đơn giản nhất là nén thư mục dự án rồi copy sang máy chủ.
-
-Trên máy dev (`G:\Khosotay`), **loại trừ** các thư mục sau khi nén (không cần thiết / sẽ tạo lại trên máy chủ):
-- `.venv\` (môi trường ảo Python — cài lại trên máy chủ, không copy qua)
-- `__pycache__\`
-- `backups\` (bản sao lưu của máy dev, không cần trên máy chủ)
-- `.env` (chứa mật khẩu/API key của máy dev — **không copy trực tiếp**, sẽ tạo `.env` mới cho máy chủ ở mục 5)
-
-Ví dụ nén bằng PowerShell trên máy dev:
+Dự án đã dùng Git, code nằm ở kho riêng tư `https://github.com/trungnguyensonla-afk/khosotay.git`. Trên máy chủ, cài Git rồi clone về:
 
 ```powershell
-Compress-Archive -Path G:\Khosotay\* -DestinationPath C:\tam\khosotay_trien_khai.zip -Force
+winget install --id Git.Git -e
+cd C:\
+git clone https://github.com/trungnguyensonla-afk/khosotay.git KhoSoTay
 ```
 
-(Xoá `.venv`, `__pycache__`, `backups` trong file zip nếu `Compress-Archive` gộp hết — hoặc copy thủ công qua Explorer/RDP chỉ những gì cần.)
+Lệnh `git clone` sẽ hỏi đăng nhập GitHub (tài khoản `trungnguyensonla-afk`) — dùng **Personal Access Token** thay mật khẩu (GitHub không còn chấp nhận mật khẩu thường qua HTTPS): vào github.com → Settings → Developer settings → Personal access tokens → tạo token quyền `repo`, dùng token đó làm mật khẩu khi Git hỏi. Git sẽ nhớ lại (Windows Credential Manager) cho các lần `git pull` sau.
 
-Copy file zip sang máy chủ (USB, RDP copy-paste, hoặc `scp`/`robocopy` qua mạng nội bộ nếu 2 máy nối được nhau), rồi giải nén vào ví dụ `C:\KhoSoTay\`.
-
-> **Khuyến nghị cho lần sau:** nếu muốn cập nhật code dễ dàng hơn (không phải nén/copy thủ công mỗi lần sửa), có thể khởi tạo Git cho dự án và đẩy lên một kho lưu trữ riêng (GitHub private, hoặc Git server nội bộ của Sở), rồi trên máy chủ chỉ cần `git pull`. Đây là việc làm thêm, không bắt buộc — báo tôi nếu bạn muốn thiết lập.
+`.env`, `data\`, `backups\`, `.venv\` không nằm trong Git (đã loại trừ qua `.gitignore`) — sẽ tạo/cài riêng trên máy chủ ở các mục dưới.
 
 ---
 
@@ -217,11 +209,20 @@ sotay.sonla.gov.vn {
 
 ## 12. Cập nhật phiên bản sau này
 
-Khi có thay đổi code (tính năng mới, sửa lỗi):
+Khi có thay đổi code (tính năng mới, sửa lỗi) đã được đẩy lên GitHub (`git push` từ máy dev):
 
-1. Nén/copy code mới sang máy chủ (đè lên `C:\KhoSoTay`, **giữ nguyên** `.env`, `data\`, `backups\`, `.venv\` — chỉ đè code).
-2. `Stop-Service KhoSoTay`
-3. `.venv\Scripts\pip install -r requirements.txt` (nếu có thư viện mới)
-4. `$env:FLASK_APP="run.py"; .venv\Scripts\flask db upgrade` (nếu có thay đổi cấu trúc database — luôn chạy lệnh này để chắc chắn, không tốn gì nếu không có gì mới)
-5. `Start-Service KhoSoTay`
-6. Kiểm tra lại vài mục trong checklist ở mục 11.
+```powershell
+cd C:\KhoSoTay
+Stop-Service KhoSoTay
+git pull
+.venv\Scripts\pip install -r requirements.txt
+$env:FLASK_APP = "run.py"
+.venv\Scripts\flask db upgrade
+Start-Service KhoSoTay
+```
+
+- `pip install` chỉ thực sự cài gì mới khi `requirements.txt` có thay đổi — chạy sẵn cho chắc, không tốn gì nếu không có gì mới.
+- `flask db upgrade` tương tự — luôn chạy, an toàn nếu không có migration mới.
+- Sau đó kiểm tra lại vài mục trong checklist ở mục 11.
+
+Nếu `git pull` báo xung đột (hiếm khi xảy ra vì máy chủ không tự sửa code) — báo lại, đừng tự ý `git reset --hard`.
