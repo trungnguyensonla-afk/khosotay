@@ -12,19 +12,26 @@ DANH_SACH_LINH_VUC_MAC_DINH = [
     "Thú y", "Lâm nghiệp", "Bảo vệ thực vật", "Thủy sản", "Thủy lợi",
     "Tài nguyên nước", "Phòng chống thiên tai", "OCOP", "Nông thôn mới",
     "Khuyến nông", "Phát triển nông thôn",
+    "Lĩnh vực chung", "Thủ tục hành chính", "Chuyển đổi số",
 ]
 
-# Danh sách gợi ý ban đầu - admin có thể sửa/bổ sung sau cho đúng cơ cấu tổ chức thực tế
+# Cơ cấu tổ chức Sở theo QĐ 522
 DANH_SACH_DON_VI_MAC_DINH = [
-    "Văn phòng Sở",
-    "Phòng Trồng trọt và Bảo vệ thực vật",
-    "Phòng Chăn nuôi và Thú y",
-    "Phòng Quản lý đất đai",
-    "Phòng Tài nguyên nước và Khí tượng thủy văn",
+    "Văn phòng",
+    "Chi cục Trồng trọt và Bảo vệ thực vật",
+    "Chi cục Chăn nuôi, Thú y và Thủy sản",
+    "Phòng Quản lý tài nguyên đất",
     "Chi cục Kiểm lâm",
-    "Chi cục Thủy lợi",
-    "Chi cục Bảo vệ môi trường",
+    "Chi cục Thủy lợi và Tài nguyên nước",
+    "Phòng Quản lý môi trường",
     "Trung tâm Khuyến nông và Chuyển đổi số",
+    "Phòng Tổ chức cán bộ",
+    "Phòng Kế hoạch - Tài chính",
+    "Phòng Địa chất và Khoáng sản",
+    "Phòng Đo đạc, Bản đồ và Viễn thám",
+    "Chi cục Phát triển nông thôn",
+    "Văn phòng Đăng ký đất đai",
+    "Trung tâm Nước và Quan trắc môi trường",
 ]
 
 
