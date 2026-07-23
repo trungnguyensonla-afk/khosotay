@@ -5,7 +5,27 @@ import click
 from werkzeug.security import generate_password_hash
 
 from app.extensions import db
-from app.models import NguoiDung
+from app.models import NguoiDung, LinhVuc, DonVi
+
+DANH_SACH_LINH_VUC_MAC_DINH = [
+    "Đất đai", "Môi trường", "Khoáng sản", "Trồng trọt", "Chăn nuôi",
+    "Thú y", "Lâm nghiệp", "Bảo vệ thực vật", "Thủy sản", "Thủy lợi",
+    "Tài nguyên nước", "Phòng chống thiên tai", "OCOP", "Nông thôn mới",
+    "Khuyến nông", "Phát triển nông thôn",
+]
+
+# Danh sách gợi ý ban đầu - admin có thể sửa/bổ sung sau cho đúng cơ cấu tổ chức thực tế
+DANH_SACH_DON_VI_MAC_DINH = [
+    "Văn phòng Sở",
+    "Phòng Trồng trọt và Bảo vệ thực vật",
+    "Phòng Chăn nuôi và Thú y",
+    "Phòng Quản lý đất đai",
+    "Phòng Tài nguyên nước và Khí tượng thủy văn",
+    "Chi cục Kiểm lâm",
+    "Chi cục Thủy lợi",
+    "Chi cục Bảo vệ môi trường",
+    "Trung tâm Khuyến nông và Chuyển đổi số",
+]
 
 
 def dang_ky_cli(app):
@@ -37,3 +57,19 @@ def dang_ky_cli(app):
         db.session.add(nguoi_dung)
         db.session.commit()
         click.echo(f'Đã tạo tài khoản quản trị "{ten_dang_nhap}".')
+
+    @app.cli.command("khoi-tao-danh-muc")
+    def khoi_tao_danh_muc():
+        """Nạp sẵn danh mục lĩnh vực + đơn vị mặc định - dùng khi triển khai lần đầu. An toàn chạy lại nhiều lần (không tạo trùng)."""
+        so_luong_moi = 0
+        for ten in DANH_SACH_LINH_VUC_MAC_DINH:
+            if not LinhVuc.query.filter_by(ten=ten).first():
+                db.session.add(LinhVuc(ten=ten))
+                so_luong_moi += 1
+        for ten in DANH_SACH_DON_VI_MAC_DINH:
+            if not DonVi.query.filter_by(ten=ten).first():
+                db.session.add(DonVi(ten=ten))
+                so_luong_moi += 1
+        db.session.commit()
+        click.echo(f"Đã thêm {so_luong_moi} danh mục mới (lĩnh vực + đơn vị).")
+        click.echo(f"Tổng lĩnh vực: {LinhVuc.query.count()}, tổng đơn vị: {DonVi.query.count()}")

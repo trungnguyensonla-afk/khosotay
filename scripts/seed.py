@@ -13,26 +13,7 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app.extensions import db
 from app.models import LinhVuc, DonVi, NguoiDung
-
-DANH_SACH_LINH_VUC = [
-    "Đất đai", "Môi trường", "Khoáng sản", "Trồng trọt", "Chăn nuôi",
-    "Thú y", "Lâm nghiệp", "Bảo vệ thực vật", "Thủy sản", "Thủy lợi",
-    "Tài nguyên nước", "Phòng chống thiên tai", "OCOP", "Nông thôn mới",
-    "Khuyến nông", "Phát triển nông thôn",
-]
-
-# Danh sách gợi ý ban đầu - admin có thể sửa/bổ sung sau cho đúng cơ cấu tổ chức thực tế
-DANH_SACH_DON_VI = [
-    "Văn phòng Sở",
-    "Phòng Trồng trọt và Bảo vệ thực vật",
-    "Phòng Chăn nuôi và Thú y",
-    "Phòng Quản lý đất đai",
-    "Phòng Tài nguyên nước và Khí tượng thủy văn",
-    "Chi cục Kiểm lâm",
-    "Chi cục Thủy lợi",
-    "Chi cục Bảo vệ môi trường",
-    "Trung tâm Khuyến nông và Chuyển đổi số",
-]
+from app.cli import DANH_SACH_LINH_VUC_MAC_DINH as DANH_SACH_LINH_VUC, DANH_SACH_DON_VI_MAC_DINH as DANH_SACH_DON_VI
 
 TAI_KHOAN_ADMIN_MAC_DINH = {
     "ten_dang_nhap": "admin",

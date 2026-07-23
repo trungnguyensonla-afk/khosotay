@@ -119,6 +119,14 @@ $env:FLASK_APP = "run.py"
 
 Lệnh này tạo toàn bộ bảng theo đúng cấu trúc hiện tại (kể cả các thay đổi gần đây: bảng `tep_tai_lieu`, cột tìm kiếm toàn văn...).
 
+Sau đó nạp sẵn danh mục lĩnh vực + đơn vị mặc định (16 lĩnh vực nghiệp vụ + danh sách đơn vị gợi ý) để không phải gõ tay từng cái qua giao diện Quản trị:
+
+```powershell
+.venv\Scripts\flask khoi-tao-danh-muc
+```
+
+An toàn chạy lại nhiều lần — cái nào đã có sẵn thì bỏ qua, không tạo trùng.
+
 ---
 
 ## 7. Tạo tài khoản quản trị đầu tiên
