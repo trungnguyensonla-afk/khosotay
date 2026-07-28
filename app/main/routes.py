@@ -53,8 +53,14 @@ def _parse_ngay(chuoi_ngay):
         return None
 
 
-def _trich_doan(noi_dung, tu_khoa, do_dai=160):
-    """Cắt một đoạn quanh từ khóa tìm thấy trong nội dung, escape an toàn rồi mới highlight."""
+def _trich_doan(noi_dung, tu_khoa, tom_tat=None, do_dai=160):
+    """Cắt một đoạn quanh từ khóa tìm thấy trong nội dung, escape an toàn rồi mới highlight.
+    Không tìm kiếm (tu_khoa rỗng): ưu tiên tóm tắt do biên tập tự viết (đọc mạch lạc hơn
+    cắt thô đoạn đầu tài liệu, vốn có thể là mục lục/số hiệu/tiêu đề lộn xộn)."""
+    if not tu_khoa and tom_tat:
+        doan = tom_tat[:do_dai] + ("…" if len(tom_tat) > do_dai else "")
+        return Markup(escape(doan))
+
     if not noi_dung:
         return ""
 
@@ -140,7 +146,7 @@ def trang_chu():
         {
             "tai_lieu": tl,
             "loai_file": _loai_file_tai_lieu(tl),
-            "trich_doan": _trich_doan(tl.noi_dung_text, tu_khoa),
+            "trich_doan": _trich_doan(tl.noi_dung_text, tu_khoa, tl.tom_tat),
             "status_class": NHAN_TRANG_THAI_SANG_CSS.get(tl.tinh_trang, "review"),
             # Nút tải nhanh ở danh sách kết quả trỏ vào file đầu tiên (tài liệu có thể có nhiều file)
             "tep_dau_id": min(tl.tep_dinh_kem, key=lambda t: t.thu_tu).id if tl.tep_dinh_kem else None,
@@ -310,6 +316,7 @@ def nap_tai_lieu():
         else:
             tai_lieu = TaiLieu(
                 tieu_de=tieu_de,
+                tom_tat=request.form.get("tom_tat", "").strip() or None,
                 so_hieu=request.form.get("so_hieu", "").strip() or None,
                 co_quan_ban_hanh=request.form.get("co_quan_ban_hanh", "").strip() or None,
                 linh_vuc_id=request.form.get("linh_vuc_id", type=int),
@@ -447,6 +454,7 @@ def sua_tai_lieu(tai_lieu_id):
             flash("Vui lòng nhập tiêu đề tài liệu.", "loi")
         else:
             tl.tieu_de = tieu_de
+            tl.tom_tat = request.form.get("tom_tat", "").strip() or None
             tl.so_hieu = request.form.get("so_hieu", "").strip() or None
             tl.co_quan_ban_hanh = request.form.get("co_quan_ban_hanh", "").strip() or None
             tl.linh_vuc_id = request.form.get("linh_vuc_id", type=int)

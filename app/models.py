@@ -93,6 +93,9 @@ class TaiLieu(db.Model):
     ngay_ban_hanh = db.Column(db.Date, nullable=True)
     ngay_het_hieu_luc = db.Column(db.Date, nullable=True)
     phien_ban = db.Column(db.String(20), nullable=True)
+    # Tóm tắt do biên tập tự viết (không bắt buộc) - hiển thị ở trang chủ thay cho việc
+    # cắt thô đoạn đầu noi_dung_text, vì nội dung trích xuất/OCR thô đọc lôm côm.
+    tom_tat = db.Column(db.Text, nullable=True)
     # Nội dung tổng hợp từ tất cả file đính kèm (bảng tep_tai_lieu) - ghép theo thu_tu,
     # phục vụ tìm kiếm toàn văn qua noi_dung_tsv bên dưới. Xem TepTaiLieu cho nội dung riêng từng file.
     noi_dung_text = db.Column(db.Text, nullable=True)

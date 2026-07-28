@@ -38,6 +38,11 @@
                 <input type="text" id="tieu_de" name="tieu_de" value="{{ tl.tieu_de }}" required>
             </div>
 
+            <div class="truong-nhap">
+                <label for="tom_tat">Tóm tắt (hiển thị ở trang chủ, không bắt buộc)</label>
+                <textarea id="tom_tat" name="tom_tat" rows="3" placeholder="Tóm tắt ngắn gọn nội dung tài liệu để hiển thị ở trang chủ - nếu bỏ trống, hệ thống sẽ tự cắt đoạn đầu tài liệu (có thể đọc lộn xộn).">{{ tl.tom_tat or '' }}</textarea>
+            </div>
+
             <div class="dong-2-cot">
                 <div class="truong-nhap">
                     <label for="so_hieu">Số hiệu văn bản</label>
