@@ -1,4 +1,4 @@
-# Kho Sổ Tay Hướng Dẫn Điện Tử - thư viện Python theo mục 2 của spec
+# Kho So Tay Huong Dan Dien Tu - thu vien Python theo muc 2 cua spec
 
 # Khung web
 Flask
@@ -13,7 +13,7 @@ psycopg2-binary
 # Máy chủ chạy trên Windows
 waitress
 
-# Đọc / trích xuất nội dung file (dùng ở Giai đoạn 1 - phần nạp tài liệu)
+# Doc / trich xuat noi dung file (dung o Giai doan 1 - phan nap tai lieu)
 pdfplumber
 PyPDF2
 pdf2image
@@ -21,5 +21,5 @@ python-docx
 pytesseract
 Pillow
 
-# Chatbox AI hỏi-đáp trên tài liệu (Giai đoạn 3)
+# Chatbox AI hoi-dap tren tai lieu (Giai doan 3)
 anthropic
