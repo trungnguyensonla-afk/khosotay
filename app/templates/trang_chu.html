@@ -34,6 +34,9 @@
     <aside class="sidebar">
         {% if current_user.is_authenticated and current_user.la_bien_tap() %}
         <a href="{{ url_for('main.nap_tai_lieu') }}"><button class="btn-upload" type="button">➕ Nạp tài liệu mới</button></a>
+        <a href="{{ url_for('main.trang_chu', chi_an=0 if xem_an else 1) }}" style="display:block;text-align:center;font-size:12.5px;color:var(--muted);margin-top:6px">
+            {{ '← Về danh sách công khai' if xem_an else '🚫 Xem tài liệu đã ẩn' }}
+        </a>
         {% endif %}
 
         <div class="facet">
@@ -132,6 +135,11 @@
     </aside>
 
     <main class="results">
+        {% if xem_an %}
+        <div class="doc" style="background:var(--red-bg);color:var(--red);text-align:center;padding:10px;margin-bottom:14px">
+            🚫 Đang xem danh sách tài liệu <b>đã ẩn</b> khỏi tra cứu công khai - chỉ biên tập/admin nhìn thấy trang này.
+        </div>
+        {% endif %}
         <div class="bar">
             <div class="count">Tìm thấy <b>{{ tong_so_ket_qua }}</b> tài liệu</div>
             <div class="tools">

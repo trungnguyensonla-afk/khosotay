@@ -97,7 +97,15 @@ def trang_chu():
     den_ngay = request.args.get("den_ngay", "").strip()
     sap_xep = request.args.get("sort", "new")
 
-    truy_van = TaiLieu.query
+    # Chỉ biên tập/admin mới bật được chế độ xem tài liệu đã ẩn (để tìm và khôi phục) -
+    # người dùng công khai luôn chỉ thấy tài liệu chưa ẩn.
+    xem_an = (
+        request.args.get("chi_an") == "1"
+        and current_user.is_authenticated
+        and current_user.la_bien_tap()
+    )
+
+    truy_van = TaiLieu.query.filter(TaiLieu.da_an.is_(xem_an))
     truy_van_tsv = None
 
     if tu_khoa:
@@ -154,15 +162,16 @@ def trang_chu():
         for tl in ket_qua
     ]
 
-    tong_so_tai_lieu = TaiLieu.query.count()
-    dem_linh_vuc = dict(db.session.query(TaiLieu.linh_vuc_id, func.count(TaiLieu.id)).group_by(TaiLieu.linh_vuc_id).all())
-    dem_don_vi = dict(db.session.query(TaiLieu.don_vi_id, func.count(TaiLieu.id)).group_by(TaiLieu.don_vi_id).all())
-    dem_tinh_trang = dict(db.session.query(TaiLieu.tinh_trang, func.count(TaiLieu.id)).group_by(TaiLieu.tinh_trang).all())
-    dem_loai_van_ban = dict(db.session.query(TaiLieu.loai_van_ban, func.count(TaiLieu.id)).group_by(TaiLieu.loai_van_ban).all())
+    tong_so_tai_lieu = TaiLieu.query.filter(TaiLieu.da_an.is_(False)).count()
+    dem_linh_vuc = dict(db.session.query(TaiLieu.linh_vuc_id, func.count(TaiLieu.id)).filter(TaiLieu.da_an.is_(False)).group_by(TaiLieu.linh_vuc_id).all())
+    dem_don_vi = dict(db.session.query(TaiLieu.don_vi_id, func.count(TaiLieu.id)).filter(TaiLieu.da_an.is_(False)).group_by(TaiLieu.don_vi_id).all())
+    dem_tinh_trang = dict(db.session.query(TaiLieu.tinh_trang, func.count(TaiLieu.id)).filter(TaiLieu.da_an.is_(False)).group_by(TaiLieu.tinh_trang).all())
+    dem_loai_van_ban = dict(db.session.query(TaiLieu.loai_van_ban, func.count(TaiLieu.id)).filter(TaiLieu.da_an.is_(False)).group_by(TaiLieu.loai_van_ban).all())
 
     thong_bao_moi_nhat = ThongBao.query.order_by(ThongBao.ngay_dang.desc()).limit(3).all()
     tai_lieu_xem_nhieu = (
-        TaiLieu.query.filter(TaiLieu.luot_xem > 0).order_by(TaiLieu.luot_xem.desc()).limit(3).all()
+        TaiLieu.query.filter(TaiLieu.luot_xem > 0, TaiLieu.da_an.is_(False))
+        .order_by(TaiLieu.luot_xem.desc()).limit(3).all()
     )
 
     return render_template(
@@ -181,6 +190,7 @@ def trang_chu():
         dem_loai_van_ban=dem_loai_van_ban,
         thong_bao_moi_nhat=thong_bao_moi_nhat,
         tai_lieu_xem_nhieu=tai_lieu_xem_nhieu,
+        xem_an=xem_an,
         bo_loc={
             "q": tu_khoa,
             "linh_vuc": linh_vuc_id,
@@ -401,6 +411,11 @@ def _ten_file_hien_thi(duong_dan_file):
 def chi_tiet_tai_lieu(tai_lieu_id):
     tl = TaiLieu.query.get_or_404(tai_lieu_id)
 
+    # Tài liệu đã ẩn (xóa mềm) - chỉ biên tập/admin xem được (để kiểm tra trước khi khôi phục),
+    # người dùng công khai coi như không tồn tại.
+    if tl.da_an and not (current_user.is_authenticated and current_user.la_bien_tap()):
+        abort(404)
+
     # Cập nhật kiểu SQL "luot_xem = luot_xem + 1" (không đọc-rồi-ghi bằng Python) để tránh
     # mất lượt đếm khi nhiều người xem cùng lúc ghi đè giá trị cũ lên nhau.
     tl.luot_xem = TaiLieu.luot_xem + 1
@@ -481,6 +496,25 @@ def sua_tai_lieu(tai_lieu_id):
         loai_van_ban_lua_chon=LOAI_VAN_BAN_LUA_CHON,
         tinh_trang_lua_chon=DANH_SACH_TINH_TRANG,
     )
+
+
+@main_bp.route("/tai-lieu/<int:tai_lieu_id>/an", methods=["POST"])
+@login_required
+def an_tai_lieu(tai_lieu_id):
+    """Xóa mềm: bật/tắt ẩn tài liệu khỏi trang chủ/tìm kiếm công khai. Không xóa dữ liệu -
+    biên tập/admin khôi phục lại được bất kỳ lúc nào."""
+    if not current_user.la_bien_tap():
+        abort(403)
+
+    tl = TaiLieu.query.get_or_404(tai_lieu_id)
+    tl.da_an = not tl.da_an
+    db.session.commit()
+
+    if tl.da_an:
+        flash(f'Đã ẩn tài liệu "{tl.tieu_de}" khỏi trang chủ và tìm kiếm công khai - có thể khôi phục lại bất kỳ lúc nào.', "thanh_cong")
+    else:
+        flash(f'Đã khôi phục tài liệu "{tl.tieu_de}", hiển thị lại công khai.', "thanh_cong")
+    return redirect(url_for("main.chi_tiet_tai_lieu", tai_lieu_id=tl.id))
 
 
 @main_bp.route("/tai-lieu/<int:tai_lieu_id>/them-file", methods=["POST"])

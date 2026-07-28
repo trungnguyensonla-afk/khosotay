@@ -23,11 +23,15 @@
                 <a href="{{ url_for('main.sua_tai_lieu', tai_lieu_id=tl.id) }}">
                     <button class="nut-chinh" type="button" style="width:auto;padding:10px 22px;background:#fff;color:var(--green-dark);border:1px solid var(--green)">✏ Sửa thông tin</button>
                 </a>
+                <form method="POST" action="{{ url_for('main.an_tai_lieu', tai_lieu_id=tl.id) }}" onsubmit="return confirm('{{ 'Khôi phục tài liệu này, hiển thị lại công khai?' if tl.da_an else 'Ẩn tài liệu này khỏi trang chủ và tìm kiếm công khai? Có thể khôi phục lại sau.' }}');">
+                    <button class="nut-chinh" type="submit" style="width:auto;padding:10px 22px;background:#fff;color:var(--red);border:1px solid var(--red)">{{ '↩ Khôi phục' if tl.da_an else '🚫 Ẩn tài liệu' }}</button>
+                </form>
                 {% endif %}
             </div>
         </div>
 
         <div class="tags" style="margin-top:14px;padding-left:0">
+            {% if tl.da_an %}<span class="badge expired">🚫 Đã ẩn khỏi tra cứu công khai</span>{% endif %}
             <span class="badge {{ status_class }}">{{ tl.tinh_trang or 'Chưa xác định' }}</span>
             {% if tl.trang_thai_xu_ly == 'dang_xu_ly' %}<span class="badge review">⏳ Đang OCR</span>{% endif %}
             {% if tl.trang_thai_xu_ly == 'loi' %}<span class="badge expired">⚠ Lỗi xử lý nội dung</span>{% endif %}

@@ -105,6 +105,9 @@ class TaiLieu(db.Model):
     trang_thai_xu_ly = db.Column(db.String(20), nullable=False, default="hoan_thanh")
     # Tăng mỗi khi có người mở trang chi tiết - phục vụ mục "Tài liệu xem nhiều" ở trang chủ
     luot_xem = db.Column(db.Integer, nullable=False, default=0)
+    # Xóa mềm: ẩn khỏi trang chủ/tìm kiếm công khai nhưng vẫn giữ nguyên trong DB + file gốc,
+    # biên tập/admin khôi phục lại được bất kỳ lúc nào (khác xóa hẳn - không có route xóa hẳn).
+    da_an = db.Column(db.Boolean, nullable=False, default=False)
 
     # Cột tìm kiếm toàn văn (mục 4.3) - PostgreSQL tự tính lại mỗi khi tieu_de/so_hieu/
     # noi_dung_text thay đổi, không cần code Python cập nhật. Dùng config 'simple' (không
